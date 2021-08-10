@@ -17,20 +17,25 @@ def render_page(url, scroll_number):
     driver.get(url)
     print("Rendering content...")
     sleep(5)
-    # Scroll down to load more posts, use load_number to specify how many times to scroll
+    # Scroll down to load more posts, use scroll_number to specify how many times to scroll
     for i in range(scroll_number):
         driver.find_element_by_tag_name("html").send_keys(Keys.END)
         sleep(2)
-    # sleep(3)
-    sleep(10)
+    sleep(3)
     source = driver.page_source
     driver.quit()
     return source
 
 
-def download_subreddit_images(subreddit, load_amount=1):
+def download_subreddit_images(subreddit, load_amount=1, sorting_option="hot"):
+    sorting_options = ["hot", "new", "top", "rising"]
+    # Ensure a valid sorting option is chosen
+    if sorting_option not in sorting_options:
+        raise ValueError(
+            "Invalid sorting option. Please specify one of the following: hot, new, top, rising")
+
     source = render_page(
-        f"https://www.reddit.com/r/{subreddit}", scroll_number=load_amount)
+        f"https://www.reddit.com/r/{subreddit}/{sorting_option}", scroll_number=load_amount)
     soup = BeautifulSoup(source, "lxml")
 
     print("Downloading images...")
@@ -58,4 +63,4 @@ def download_subreddit_images(subreddit, load_amount=1):
 
 if __name__ == "__main__":
     # Increase the load_amount to load more content (it will also increase the wait time)
-    download_subreddit_images("itookapicture", load_amount=10)
+    download_subreddit_images("itookapicture")
