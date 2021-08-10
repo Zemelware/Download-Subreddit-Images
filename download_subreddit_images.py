@@ -8,7 +8,7 @@ from time import sleep
 
 
 # This function will wait so more posts are loaded
-def render_page(url):
+def render_page(url, scroll_number):
     options = Options()
     options.add_argument("--headless")
     options.binary_location = "/Applications/Brave Browser.app/Contents/MacOS/Brave Browser"
@@ -17,19 +17,20 @@ def render_page(url):
     driver.get(url)
     print("Rendering content...")
     sleep(5)
-    # Scroll down to load more posts
-    # TODO - create for loop and parameter to specify how much content to load
-    driver.find_element_by_tag_name("html").send_keys(Keys.END)
-    sleep(2)
-    driver.find_element_by_tag_name("html").send_keys(Keys.END)
-    sleep(3)
+    # Scroll down to load more posts, use load_number to specify how many times to scroll
+    for i in range(scroll_number):
+        driver.find_element_by_tag_name("html").send_keys(Keys.END)
+        sleep(2)
+    # sleep(3)
+    sleep(10)
     source = driver.page_source
     driver.quit()
     return source
 
 
-def download_subreddit_images(subreddit):
-    source = render_page(f"https://www.reddit.com/r/{subreddit}")
+def download_subreddit_images(subreddit, load_amount=1):
+    source = render_page(
+        f"https://www.reddit.com/r/{subreddit}", scroll_number=load_amount)
     soup = BeautifulSoup(source, "lxml")
 
     print("Downloading images...")
@@ -56,4 +57,5 @@ def download_subreddit_images(subreddit):
 
 
 if __name__ == "__main__":
-    download_subreddit_images("itookapicture")
+    # Increase the load_amount to load more content (it will also increase the wait time)
+    download_subreddit_images("itookapicture", load_amount=10)
