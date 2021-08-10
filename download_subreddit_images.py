@@ -63,4 +63,5 @@ def download_subreddit_images(subreddit, load_amount=1, sorting_option="hot"):
 
 if __name__ == "__main__":
     # Increase the load_amount to load more content (it will also increase the wait time)
-    download_subreddit_images("itookapicture")
+    # Get good photos from EarthPorn, MostBeautiful, itookapicture
+    download_subreddit_images("EarthPorn")
